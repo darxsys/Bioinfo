@@ -62,7 +62,7 @@ plot.multi.dens(list(log10(as.numeric(my_data[,10]) + 100),
     log10(as.numeric(sub_log_greedy[,10]) + 100), 
     log10(as.numeric(sub_log_not[,10]) + 100)), 
     name=paste(data_name, "density of log of real gap size"), 
-    my_cols, my_text, 
+    my_cols, my_text,
     abline_flag=TRUE, abline_val=log10(100))
 
 dev.off()
