@@ -2,7 +2,7 @@
 args = commandArgs(TRUE)
 if (length(args) <= 2) {
     print("Wrong number of arguments.")
-    print("Rscript script.r <input_file> <output_prefix> <name_of_dataset>")
+    print("Rscript script.r <input_file> <out_prefix> <name_of_dataset>")
     stop("Exiting.")
 }
 
@@ -11,8 +11,8 @@ out_prefix = args[2]
 data_name = args[3]
 
 library(graphics)
-buylrd = c("#313695", "#4575B4", "#74ADD1", "#ABD9E9", "#E0F3F8", 
-    "#FFFFBF", "#FEE090", "#FDAE61", "#F46D43", "#D73027", "#A50026")
+buylrd = c("#313895", "#4575B4", "#74ADD1", "#ABD9E9", "#E0F3F8", 
+    "#FFFFBF", "#FEE090", "#FDAE81", "#F48D43", "#D73027", "#A50028")
 library(lattice)
 
 plot.multi.dens = function(s, name="", colorvec, textvec, 
@@ -46,16 +46,15 @@ my_data[,10] = as.numeric(as.character(my_data[,10]))
 my_data = subset(my_data, !is.na(my_data[,10]))
 # print (my_data[,10])
 # exclude invalid gaps from the analysis
+my_cols = c("red", "blue", "coral4", "darkolivegreen1")
+my_text = c("all gaps", "quadprog", "greedy", "unsolved")
 
 pdf(paste(out_prefix, "-log-dens-real.pdf", sep=""))
 # log of size density plot
 sub_quad = subset(my_data, my_data[,8] == "quadprog")
-sub_greedy = subset(my_data, my_data[,8] == "greedy" & 
-    my_data[,6] != "Invalid")
+sub_greedy = subset(my_data, my_data[,8] == "greedy" & my_data[,6] != "Invalid")
 sub_not = subset(my_data, my_data[,6] == "Invalid")
 
-my_cols = c("red", "blue", "coral4", "darkolivegreen1")
-my_text = c("all gaps", "quadprog", "greedy", "unsolved")
 
 plot.multi.dens(list(log10(as.numeric(my_data[,10]) + 100), 
     log10(as.numeric(sub_quad[,10]) + 100), 
@@ -78,7 +77,7 @@ sub_valid_greedy = subset(subvalid, subvalid[,8] == "greedy")
 sub_valid_greedy_correct = subset(sub_valid_greedy, sub_valid_greedy[,9] == 1)
 sub_valid_greedy_incorrect = subset(sub_valid_greedy, sub_valid_greedy[,9] == 0)
 
-my_cols = c("red", "darkolivegreen1")
+my_cols = c("darkgoldenrod4", "darkorange3")
 my_text = c("All correct gaps", "all wrong gaps")
 
 # all gaps
@@ -110,3 +109,62 @@ plot.multi.dens(list(log10(as.numeric(sub_valid_greedy_correct[,10]) + 100),
     my_cols, my_text, abline_flag=TRUE, abline_val=log10(100))
 
 dev.off()
+
+# barplot of cathegories for each method
+size_cats = c(0, 500, 2000)
+overlaps = subset(my_data, my_data[,10] < size_cats[1])
+small_gaps = subset(my_data, 
+    my_data[,10] >= 0 & my_data[,10] < size_cats[2])
+medium_gaps = subset(my_data, 
+    my_data[,10] >= size_cats[2] & my_data[,10] < size_cats[3])
+large_gaps = subset(my_data, 
+    my_data[,10] >= size_cats[3])
+
+# print(small_gaps)
+# barplot of correctness for each method
+methods = c("quadprog", "greedy")
+# my_col = c()
+# 
+for (m in methods) {
+    m_overlaps_correct = subset(overlaps, 
+        overlaps[,8] == m & overlaps[,9] == 1)
+    m_small_gaps_correct = subset(small_gaps, 
+        small_gaps[,8] == m & small_gaps[,9] == 1)
+    m_medium_gaps_correct = subset(medium_gaps, 
+        medium_gaps[,8] == m & medium_gaps[,9] == 1)
+    m_large_gaps_correct = subset(large_gaps, 
+        large_gaps[,8] == m & large_gaps[,9] == 1)
+
+    m_overlaps_incorrect = subset(overlaps, 
+        overlaps[,8] == m & overlaps[,9] == 0)
+    m_small_gaps_incorrect = subset(small_gaps, 
+        small_gaps[,8] == m & small_gaps[,9] == 0)
+    m_medium_gaps_incorrect = subset(medium_gaps, 
+        medium_gaps[,8] == m & medium_gaps[,9] == 0)
+    m_large_gaps_incorrect = subset(large_gaps, 
+        large_gaps[,8] == m & large_gaps[,9] == 0)
+
+    name = paste(out_prefix, "-", sep="")
+    name = paste(name, m, sep="")
+    pdf(paste(name, "-barplot-correctness-categories.pdf", sep=""))
+
+    values = c(nrow(m_overlaps_correct), nrow(m_overlaps_incorrect),
+        nrow(m_small_gaps_correct), nrow(m_small_gaps_correct),
+        nrow(m_medium_gaps_correct), nrow(m_medium_gaps_incorrect),
+        nrow(m_large_gaps_correct), nrow(m_large_gaps_incorrect))
+
+    overlap_name = paste("<", size_cats[1], sep="")
+    small_name = paste(size_cats[1], "-", sep="")
+    small_name = paste(small_name, size_cats[2], sep="")
+    medium_name = paste(size_cats[2], "-", sep="")
+    medium_name = paste(medium_name, size_cats[3], sep="")
+    large_name = paste(">=", size_cats[3], sep="")
+    labels = c(overlap_name, small_name, medium_name, large_name)
+    # names(values) = labels
+    # print(labels)
+    barplot(values, col=my_cols, beside=TRUE)
+
+    dev.off()
+
+}
+
