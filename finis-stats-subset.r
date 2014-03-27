@@ -1,6 +1,5 @@
 # Script to produce a subset of possible graphs for Finis
 args<-commandArgs(TRUE)
-
 library(graphics)
 # library('Hmisc')
 buylrd <- c("#313695", "#4575B4", "#74ADD1", "#ABD9E9", "#E0F3F8", 
