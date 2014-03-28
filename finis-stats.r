@@ -99,7 +99,26 @@ boxplot(as.numeric(sub_greedy[,10])-as.numeric(sub_greedy[,6]),
     as.numeric(sub_quad[,10])-as.numeric(sub_quad[,6]), 
     outline=TRUE, col=c("darkorange3", "indianred4"), 
     names=c("greedy", "quadprog"), 
-    main=paste(data_name, "boxplot of Real-Finis size"))
+    main=paste(data_name, "boxplot of Real-Finis size for all gaps"))
+dev.off()
+
+pdf(paste(out_prefix, "-scatter-greedy.pdf", sep=""))
+#scatterplot opera vs finis size
+smoothScatter(as.numeric(sub_greedy[,6]),as.numeric(sub_greedy[,5]), 
+    nbin=100, nrpoints=Inf, 
+    colramp = colorRampPalette(c(buylrd)), 
+    pch="", cex=.7, col="black", 
+    xlab="Finis size", ylab="Opera size", 
+    main=paste(data_name, "Opera vs Finis for greedy"))
+dev.off()
+
+pdf(paste(out_prefix, "-scatter-quad.pdf", sep=""))
+smoothScatter(as.numeric(sub_quad[,6]),as.numeric(sub_quad[,5]), 
+    nbin=100, nrpoints=Inf, 
+    colramp = colorRampPalette(c(buylrd)), 
+    pch="", cex=.7, col="black", 
+    xlab="Finis size", ylab="Opera size", 
+    main=paste(data_name, "Opera vs Finis for quadprog"))
 dev.off()
 
 #correctness density plots - 3 plots, all, quadprog, greedy
@@ -145,6 +164,7 @@ plot.multi.dens(list(log10(as.numeric(sub_valid_greedy_correct[,10]) + 100),
     my_cols, my_text, abline_flag=TRUE, abline_val=log10(100))
 
 dev.off()
+
 
 # barplot of cathegories for each method
 size_cats = c(0, 500, 2000)
