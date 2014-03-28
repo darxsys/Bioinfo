@@ -46,42 +46,14 @@ num_gaps = nrow(my_data)
 my_data[,10] = as.numeric(as.character(my_data[,10]))
 my_data = subset(my_data, !is.na(my_data[,10]))
 
-my_cols = c("coral4", "darkolivegreen1", "red", "blue")
+my_cols = c("orangered", "darkolivegreen1", "indianred4", "navyblue")
 my_text = c("all gaps", "quadprog", "greedy", "unsolved")
 
-# barplot of correctness rate
-sub_correct = subset(my_data, my_data[,9] == 1)
-# sub_gapcloser = NA 
-if (data_name == "Drosophila") {
-    sub_gapcloser = 1976/5222
-    gapcloser_num = 1976
-} else if (data_name == "Celegans") {
-    sub_gapcloser = 8186/20208
-    gapcloser_num = 8186
-}
-
-pdf(paste(out_prefix, "-barplot-correctness.pdf", sep=""))
-barplot(c(nrow(sub_correct)/num_gaps, sub_gapcloser),
-    col=my_cols, names.arg=c("Finis", "GapCloser"),
-    ylab="Correctness",
-    main=paste(data_name, 
-        "barplot of correctness of Finis and gapcloser"))
-dev.off()
-
-# number of gaps closed by finis/gapcloser
-pdf(paste(out_prefix, "-barplot-num-closed.pdf", sep=""))
-barplot(c(nrow(sub_correct), gapcloser_num),
-    col=my_cols, names.arg=c("Finis", "GapCloser"),
-    ylab="Number",
-    main=paste(data_name, 
-        "barplot of correctly closed gaps of Finis and gapcloser"))
-dev.off()
-
 # log of size density plot
-pdf(paste(out_prefix, "-log-dens-real.pdf", sep=""))
-sub_quad = subset(my_data, my_data[,8] == "quadprog")
+sub_quad = subset(my_data, my_data[,8] == "quadprog" & my_data[,6] != "Invalid")
 sub_greedy = subset(my_data, my_data[,8] == "greedy" & my_data[,6] != "Invalid")
 sub_not = subset(my_data, my_data[,6] == "Invalid")
+pdf(paste(out_prefix, "-log-dens-real.pdf", sep=""))
 
 plot.multi.dens(list(log10(as.numeric(my_data[,10]) + 100), 
     log10(as.numeric(sub_quad[,10]) + 100), 
@@ -91,6 +63,40 @@ plot.multi.dens(list(log10(as.numeric(my_data[,10]) + 100),
     my_cols, my_text,
     abline_flag=TRUE, abline_val=log10(100))
 
+dev.off()
+
+# barplot of correctness rate
+sub_correct = subset(my_data, my_data[,9] == 1)
+# sub_gapcloser = NA 
+if (data_name == "Drosophila") {
+    sub_gapcloser = 1976/2533
+    gapcloser_num = 1976
+} else if (data_name == "Celegans") {
+    sub_gapcloser = 8186/10802
+    gapcloser_num = 8186
+}
+
+pdf(paste(out_prefix, "-barplot-correctness.pdf", sep=""))
+barplot(
+    c(nrow(sub_correct)/(nrow(sub_quad) + nrow(sub_greedy)), sub_gapcloser,
+        sum(sub_quad[,9]==1) / nrow(sub_quad),
+        sum(sub_greedy[,9]==1)/nrow(sub_greedy)),
+    col=my_cols, 
+    names.arg=c("Finis", "GapCloser", "Quadprog", "Greedy"),
+    ylab="Correctness",
+    main=paste(data_name, 
+        "barplot of correctness of Finis and gapcloser"))
+dev.off()
+
+# number of gaps closed by finis/gapcloser
+pdf(paste(out_prefix, "-barplot-num-closed.pdf", sep=""))
+barplot(c(nrow(sub_correct), gapcloser_num,
+    nrow(sub_quad), nrow(sub_greedy)),
+    col=my_cols, 
+    names.arg=c("Finis", "GapCloser", "Quadprog", "Greedy"),
+    ylab="Number",
+    main=paste(data_name, 
+        "barplot of correctly closed gaps of Finis and gapcloser"))
 dev.off()
 
 # boxplot of true gap size - finis size
