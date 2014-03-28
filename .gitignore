@@ -1,2 +1,5 @@
 crocopy.sh
 selectContigAndMap.ply
+*.aux
+*.log
+*.pdf

@@ -1,0 +1,88 @@
+\documentclass[12pt]{amsart}
+% Commands that affect the whole document go here
+\usepackage{graphicx}
+\usepackage{subcaption}
+
+
+\begin{document}
+\title{Celegans plots}
+
+\maketitle
+
+% first group of graphs
+\newpage
+\begin{figure}[h!]
+  \centering
+
+    \begin{subfigure}{230pt}
+    \centering
+      \includegraphics[width=\textwidth, height=300pt]{../finis/celegans/graphs/celegans-barplot-correctness.pdf}
+      \caption{Correctness}
+    \end{subfigure}%
+    %
+    \begin{subfigure}{230pt}
+      \includegraphics[width=\textwidth, height=300pt]{../finis/celegans/graphs/celegans-barplot-num-closed.pdf}
+      \caption{Number of gaps closed}
+    \end{subfigure}
+
+    \begin{subfigure}{400pt}
+      \includegraphics[width=\textwidth, height=300pt]{../finis/celegans/graphs/celegans-log-dens-real.pdf}
+      \caption{Density plot of log sizes}
+    \end{subfigure}    
+
+  \caption{General stats}
+\end{figure}
+
+% In depth stats
+\begin{figure}[h!]
+  \centering
+
+    \begin{subfigure}{230pt}
+    \centering
+      \includegraphics[width=\textwidth, height=300pt]{../finis/celegans/graphs/celegans-greedy-barplot-correctness-categories.pdf}
+      \caption{Correctness greedy}
+    \end{subfigure}%
+    %
+    \begin{subfigure}{230pt}
+      \includegraphics[width=\textwidth, height=300pt]{../finis/celegans/graphs/celegans-quadprog-barplot-correctness-categories.pdf}
+      \caption{Correctness qauadprog}
+    \end{subfigure}
+
+    \begin{subfigure}{230pt}
+      \includegraphics[width=\textwidth, height=300pt]{../finis/celegans/graphs/celegans-log-dens-correctness-greedy-real.pdf}
+      \caption{Density plot of log sizes}
+    \end{subfigure}%    
+    %
+    \begin{subfigure}{230pt}
+      \includegraphics[width=\textwidth, height=300pt]{../finis/celegans/graphs/celegans-log-dens-correctness-quad-real.pdf}
+      \caption{Density plot of log sizes}
+    \end{subfigure}    
+
+  \caption{In-depth correctness evaluation}
+\end{figure}
+
+% estimation of gap sizes
+\begin{figure}[h!]
+  \centering
+
+    \begin{subfigure}{230pt}
+    \centering
+      \includegraphics[width=\textwidth, height=300pt]{../finis/celegans/graphs/celegans-scatter-greedy.pdf}
+      \caption{Scatterplot for greedy}
+    \end{subfigure}%
+    %
+    \begin{subfigure}{230pt}
+      \includegraphics[width=\textwidth, height=300pt]{../finis/celegans/graphs/celegans-scatter-quad.pdf}
+      \caption{Scatterplot for quadprog}
+    \end{subfigure}
+
+    \begin{subfigure}{400pt}
+      \includegraphics[width=\textwidth, height=300pt]{../finis/celegans/graphs/celegans-boxplot-finis-real.pdf}
+      \caption{Boxplot of sizes}
+    \end{subfigure}
+
+  \caption{Estimation of gap sizes}
+\end{figure}
+
+\end{document}
+
