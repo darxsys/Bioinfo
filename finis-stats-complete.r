@@ -125,6 +125,7 @@ large_gaps = subset(my_data,
 methods = c("quadprog", "greedy")
 # my_col = c()
 # 
+leg = c("correct", "incorrect")
 for (m in methods) {
     m_overlaps_correct = subset(overlaps, 
         overlaps[,8] == m & overlaps[,9] == 1)
@@ -153,6 +154,9 @@ for (m in methods) {
         nrow(m_medium_gaps_correct), nrow(m_medium_gaps_incorrect),
         nrow(m_large_gaps_correct), nrow(m_large_gaps_incorrect))
 
+    values = matrix(values, nr=2, byrow=TRUE)
+
+
     overlap_name = paste("<", size_cats[1], sep="")
     small_name = paste(size_cats[1], "-", sep="")
     small_name = paste(small_name, size_cats[2], sep="")
@@ -162,7 +166,11 @@ for (m in methods) {
     labels = c(overlap_name, small_name, medium_name, large_name)
     # names(values) = labels
     # print(labels)
-    barplot(values, col=my_cols, beside=TRUE)
+    barplot(values, col=my_cols, beside=TRUE, 
+        names.arg=labels, xlab = "Real gap size", 
+        ylab="Number of results",
+        main = paste("Barplot of correctness for", m))
+    legend("topright", legend=leg, col=my_cols, lty=c(1,1), lwd=c(3,3))
 
     dev.off()
 
