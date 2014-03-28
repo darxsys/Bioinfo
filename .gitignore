@@ -3,3 +3,4 @@ selectContigAndMap.ply
 *.aux
 *.log
 *.pdf
+tex/*
