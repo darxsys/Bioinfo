@@ -41,20 +41,47 @@ plot.multi.dens = function(s, name="", colorvec, textvec,
 
 my_data = read.csv(file=input_file, sep='\t', skip=1, 
     stringsAsFactors = FALSE)
+num_gaps = nrow(my_data)
 # convert to numbers and not factors
 my_data[,10] = as.numeric(as.character(my_data[,10]))
 my_data = subset(my_data, !is.na(my_data[,10]))
-# print (my_data[,10])
-# exclude invalid gaps from the analysis
-my_cols = c("red", "blue", "coral4", "darkolivegreen1")
+
+my_cols = c("coral4", "darkolivegreen1", "red", "blue")
 my_text = c("all gaps", "quadprog", "greedy", "unsolved")
 
-pdf(paste(out_prefix, "-log-dens-real.pdf", sep=""))
+# barplot of correctness rate
+sub_correct = subset(my_data, my_data[,9] == 1)
+# sub_gapcloser = NA 
+if (data_name == "Drosophila") {
+    sub_gapcloser = 1976/5222
+    gapcloser_num = 1976
+} else if (data_name == "Celegans") {
+    sub_gapcloser = 8186/20208
+    gapcloser_num = 8186
+}
+
+pdf(paste(out_prefix, "-barplot-correctness.pdf", sep=""))
+barplot(c(nrow(sub_correct)/num_gaps, sub_gapcloser),
+    col=my_cols, names.arg=c("Finis", "GapCloser"),
+    ylab="Correctness",
+    main=paste(data_name, 
+        "barplot of correctness of Finis and gapcloser"))
+dev.off()
+
+# number of gaps closed by finis/gapcloser
+pdf(paste(out_prefix, "-barplot-num-closed.pdf", sep=""))
+barplot(c(nrow(sub_correct), gapcloser_num),
+    col=my_cols, names.arg=c("Finis", "GapCloser"),
+    ylab="Number",
+    main=paste(data_name, 
+        "barplot of correctly closed gaps of Finis and gapcloser"))
+dev.off()
+
 # log of size density plot
+pdf(paste(out_prefix, "-log-dens-real.pdf", sep=""))
 sub_quad = subset(my_data, my_data[,8] == "quadprog")
 sub_greedy = subset(my_data, my_data[,8] == "greedy" & my_data[,6] != "Invalid")
 sub_not = subset(my_data, my_data[,6] == "Invalid")
-
 
 plot.multi.dens(list(log10(as.numeric(my_data[,10]) + 100), 
     log10(as.numeric(sub_quad[,10]) + 100), 
@@ -64,6 +91,15 @@ plot.multi.dens(list(log10(as.numeric(my_data[,10]) + 100),
     my_cols, my_text,
     abline_flag=TRUE, abline_val=log10(100))
 
+dev.off()
+
+# boxplot of true gap size - finis size
+pdf(paste(out_prefix, "-boxplot-finis-real.pdf", sep=""))
+boxplot(as.numeric(sub_greedy[,10])-as.numeric(sub_greedy[,6]),
+    as.numeric(sub_quad[,10])-as.numeric(sub_quad[,6]), 
+    outline=TRUE, col=c("darkorange3", "indianred4"), 
+    names=c("greedy", "quadprog"), 
+    main=paste(data_name, "boxplot of Real-Finis size"))
 dev.off()
 
 #correctness density plots - 3 plots, all, quadprog, greedy
@@ -173,6 +209,4 @@ for (m in methods) {
     legend("topright", legend=leg, col=my_cols, lty=c(1,1), lwd=c(3,3))
 
     dev.off()
-
 }
-
