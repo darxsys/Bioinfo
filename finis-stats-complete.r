@@ -169,7 +169,7 @@ for (m in methods) {
     barplot(values, col=my_cols, beside=TRUE, 
         names.arg=labels, xlab = "Real gap size", 
         ylab="Number of results",
-        main = paste("Barplot of correctness for", m))
+        main = paste(data_name, paste("barplot of correctness for", m)))
     legend("topright", legend=leg, col=my_cols, lty=c(1,1), lwd=c(3,3))
 
     dev.off()
