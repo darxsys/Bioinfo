@@ -4,3 +4,4 @@ selectContigAndMap.ply
 *.log
 *.pdf
 tex/*
+.fuse*
