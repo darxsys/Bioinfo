@@ -88,17 +88,6 @@ barplot(
         "barplot of correctness of Finis and gapcloser"))
 dev.off()
 
-# number of gaps closed by finis/gapcloser
-pdf(paste(out_prefix, "-barplot-num-closed.pdf", sep=""))
-barplot(c(nrow(sub_correct), gapcloser_num,
-    nrow(sub_quad), nrow(sub_greedy)),
-    col=my_cols, 
-    names.arg=c("Finis", "GapCloser", "Quadprog", "Greedy"),
-    ylab="Number",
-    main=paste(data_name, 
-        "barplot of correctly closed gaps of Finis and gapcloser"))
-dev.off()
-
 # boxplot of true gap size - finis size
 pdf(paste(out_prefix, "-boxplot-finis-real.pdf", sep=""))
 boxplot(as.numeric(sub_greedy[,10])-as.numeric(sub_greedy[,6]),
@@ -138,7 +127,7 @@ sub_valid_greedy = subset(subvalid, subvalid[,8] == "greedy")
 sub_valid_greedy_correct = subset(sub_valid_greedy, sub_valid_greedy[,9] == 1)
 sub_valid_greedy_incorrect = subset(sub_valid_greedy, sub_valid_greedy[,9] == 0)
 
-my_cols = c("darkgoldenrod4", "darkorange3")
+my_cols_two = c("darkgoldenrod4", "darkorange3")
 my_text = c("All correct gaps", "all wrong gaps")
 
 # all gaps
@@ -147,7 +136,7 @@ pdf(paste(out_prefix, "-log-dens-correctness-all-real.pdf", sep=""))
 plot.multi.dens(list(log10(as.numeric(sub_valid_correct[,10]) + 100),
     log10(as.numeric(sub_incorrect[,10]) + 100)), 
     name = paste(data_name, "density plot of correctness using real gap size"), 
-    my_cols, my_text, abline_flag=TRUE, abline_val=log10(100))
+    my_cols_two, my_text, abline_flag=TRUE, abline_val=log10(100))
 
 dev.off()
 
@@ -157,7 +146,7 @@ pdf(paste(out_prefix, "-log-dens-correctness-quad-real.pdf", sep=""))
 plot.multi.dens(list(log10(as.numeric(sub_valid_quad_correct[,10]) + 100),
     log10(as.numeric(sub_valid_quad_incorrect[,10]) + 100)), 
     name = paste(data_name, "density plot of correctness using real gap size"), 
-    my_cols, my_text, abline_flag=TRUE, abline_val=log10(100))
+    my_cols_two, my_text, abline_flag=TRUE, abline_val=log10(100))
 
 dev.off()
 
@@ -167,8 +156,19 @@ pdf(paste(out_prefix, "-log-dens-correctness-greedy-real.pdf", sep=""))
 plot.multi.dens(list(log10(as.numeric(sub_valid_greedy_correct[,10]) + 100),
     log10(as.numeric(sub_valid_greedy_incorrect[,10]) + 100)), 
     name = paste(data_name, "density plot of correctness using real gap size"), 
-    my_cols, my_text, abline_flag=TRUE, abline_val=log10(100))
+    my_cols_two, my_text, abline_flag=TRUE, abline_val=log10(100))
 
+dev.off()
+
+# barplot of number of gaps closed by finis/gapcloser
+pdf(paste(out_prefix, "-barplot-num-closed.pdf", sep=""))
+barplot(c(nrow(sub_correct), gapcloser_num,
+    nrow(sub_valid_quad_correct), nrow(sub_valid_greedy_correct)),
+    col=my_cols, 
+    names.arg=c("Finis", "GapCloser", "Quadprog", "Greedy"),
+    ylab="Number",
+    main=paste(data_name, 
+        "barplot of correctly closed gaps of Finis and gapcloser"))
 dev.off()
 
 
@@ -228,11 +228,11 @@ for (m in methods) {
     labels = c(overlap_name, small_name, medium_name, large_name)
     # names(values) = labels
     # print(labels)
-    barplot(values, col=my_cols, beside=TRUE, 
+    barplot(values, col=my_cols_two, beside=TRUE, 
         names.arg=labels, xlab = "Real gap size", 
         ylab="Number of results",
         main = paste(data_name, paste("barplot of correctness for", m)))
-    legend("topright", legend=leg, col=my_cols, lty=c(1,1), lwd=c(3,3))
+    legend("topright", legend=leg, col=my_cols_two, lty=c(1,1), lwd=c(3,3))
 
     dev.off()
 }
