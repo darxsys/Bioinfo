@@ -33,7 +33,12 @@ mkdir -p $r_out
 mkdir -p $latex_out
 
 Rscript $rscript $rstats "$r_out/$data_prefix" $data_name
-sed -i 's/drosophila/celegans/g' $tex_script
-sed -i 's/Drosophila/Celegans/g' $tex_script
-pdflatex --output-directory=$latex_out $tex_script
-mv "$latex_out/graphs.pdf" "$latex_out/""$pdf_name"
+
+sed -i "s/drosophila/$data_prefix/g" $tex_script
+sed -i "s/Drosophila/$data_name/g" $tex_script
+sed -i "s/celegans/$data_prefix/g" $tex_script
+sed -i "s/Celegans/$data_prefix/g" $tex_script
+cp $tex_script $r_out
+
+# pdflatex --output-directory=$latex_out 
+# mv "$latex_out/graphs.pdf" "$latex_out/""$pdf_name"
