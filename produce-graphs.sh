@@ -1,16 +1,39 @@
+#!/bin/bash
 # script to produce the graphs for finis
-Rscript finis-stats.r ../finis/celegans/r-stats-celegans.out \
-    ../finis/celegans/graphs/celegans Celegans
-sed -i 's/drosophila/celegans/g' graphs.tex
-sed -i 's/Drosophila/Celegans/g' graphs.tex
-pdflatex --output-directory=tex/ graphs.tex
-mv tex/graphs.pdf tex/celegans-graphs.pdf 
+# scripts takes in the following:
+# path to the r script, 
+# path to the r stats file
+# path to the latex generating script
+# r output folder
+# path to the latex output folder
+# data name
+# data prefix
+# script will create folders if they don't exist
+# output pdf name
 
-Rscript finis-stats.r ../finis/drosophila/r-stats-drosophila.out \
-    ../finis/drosophila/graphs/drosophila Drosophila
-sed -i 's/celegans/drosophila/g' graphs.tex
-sed -i 's/Celegans/Drosophila/g' graphs.tex
-pdflatex --output-directory=tex/ graphs.tex
-mv tex/graphs.pdf tex/drosophila-graphs.pdf 
+if [ $# -ne 8 ]
+    then
+        echo "Wrong number of arguments."
+        echo -n "script <rscript> <r-stats-file> <latex-script>"
+        echo -n " <r-output-folder> <latex-output-folder> <data-name>"
+        echo " <out-pdf-name>"
+        exit -1
+fi
 
+rscript=$1
+rstats=$2
+tex_script=$3
+r_out=$4
+latex_out=$5
+data_name=$6
+data_prefix=$7
+pdf_name=$8
 
+mkdir -p $r_out
+mkdir -p $latex_out
+
+Rscript $rscript $rstats "$r_out/$data_prefix" $data_name
+sed -i 's/drosophila/celegans/g' $tex_script
+sed -i 's/Drosophila/Celegans/g' $tex_script
+pdflatex --output-directory=$latex_out $tex_script
+mv "$latex_out/graphs.pdf" "$latex_out/""$pdf_name"
