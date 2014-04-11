@@ -201,8 +201,10 @@ barplot(c(nrow(sub_valid), gapcloser_num,
 
 dev.off()
 
-# barplot of cathegories for each method
+# barplot of correctness for each method
+# portioned by size of the gaps
 size_cats = c(0, 500, 2000)
+
 overlaps = subset(sub_valid, sub_valid[,10] < size_cats[1])
 small_gaps = subset(sub_valid, 
     sub_valid[,10] >= size_cats[1] & sub_valid[,10] < size_cats[2])
@@ -245,6 +247,7 @@ for (m in methods) {
 
     values_correct = c(nrow(m_overlaps_correct), nrow(m_small_gaps_correct), 
         nrow(m_medium_gaps_correct), nrow(m_large_gaps_correct))
+
     values_incorrect = c(nrow(m_overlaps_incorrect), nrow(m_small_gaps_incorrect), 
         nrow(m_medium_gaps_incorrect), nrow(m_large_gaps_incorrect))
 

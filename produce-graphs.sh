@@ -3,15 +3,13 @@
 # scripts takes in the following:
 # path to the r script, 
 # path to the r stats file
-# path to the latex generating script
+# name of the latex generating script
 # r output folder
-# path to the latex output folder
 # data name
-# data prefix
 # script will create folders if they don't exist
 # output pdf name
 
-if [ $# -ne 8 ]
+if [ $# -ne 6 ]
     then
         echo "Wrong number of arguments."
         echo -n "script <rscript> <r-stats-file> <latex-script>"
@@ -24,21 +22,30 @@ rscript=$1
 rstats=$2
 tex_script=$3
 r_out=$4
-latex_out=$5
-data_name=$6
-data_prefix=$7
-pdf_name=$8
+data_name=$5
+pdf_name=$6
+latex_out=$r_out"/tex"
 
 mkdir -p $r_out
 mkdir -p $latex_out
 
-Rscript $rscript $rstats "$r_out" $data_name
+echo "Running R script..."
+Rscript $rscript $rstats "$r_out" $data_name > /dev/null
+echo "Statistics generated."
 
-sed -i "s/drosophila/$data_prefix/g" $tex_script
-sed -i "s/Drosophila/$data_name/g" $tex_script
-sed -i "s/celegans/$data_prefix/g" $tex_script
-sed -i "s/Celegans/$data_prefix/g" $tex_script
 cp $tex_script $r_out
+tex_path="$r_out/$tex_script"
 
-# pdflatex --output-directory=$latex_out 
-# mv "$latex_out/graphs.pdf" "$latex_out/""$pdf_name"
+current_dir=$(pwd)
+cd $r_out
+
+echo "Running latex..."
+pdflatex --output-directory="./tex" $tex_script  #> /dev/null
+mv "./tex/graphs.pdf" "./$pdf_name"
+echo "Pdf with graphs generated."
+
+echo "Removing files..."
+rm -rf "./tex"
+cd $current_dir
+rm -rf $tex_path
+echo "Done."
