@@ -32,7 +32,7 @@ pdf_name=$8
 mkdir -p $r_out
 mkdir -p $latex_out
 
-Rscript $rscript $rstats "$r_out/$data_prefix" $data_name
+Rscript $rscript $rstats "$r_out" $data_name
 
 sed -i "s/drosophila/$data_prefix/g" $tex_script
 sed -i "s/Drosophila/$data_name/g" $tex_script
