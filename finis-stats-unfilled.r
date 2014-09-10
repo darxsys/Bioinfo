@@ -6,8 +6,8 @@ buylrd = c("#313895", "#4575B4", "#74ADD1", "#ABD9E9", "#E0F3F8",
 library(lattice)
 
 plot.multi.dens = function(s, name="", colorvec, textvec, 
-    abline_flag=FALSE, abline_val=0) {
-
+    abline_flag=FALSE, abline_val=0)
+{
     junk.x = NULL
     junk.y = NULL
     for(i in 1:length(s)) {
@@ -19,9 +19,7 @@ plot.multi.dens = function(s, name="", colorvec, textvec,
 
     plot(density(s[[1]]), xlim = xr, ylim = yr, 
         main = name, col=colorvec, pch=19)
-
     legend('right', col=colorvec, legend=textvec, lty=rep(c(1), length(textvec)))
-
     if (abline_flag) {
         abline(v=abline_val)
     }
@@ -65,7 +63,7 @@ if (data_name == "Drosophila") {
 
 # colors and labels for graphs
 my_cols = c("orangered", "darkolivegreen1", "indianred4", "navyblue")
-my_cols_two = c("darkgoldenrod4", "darkorange3")
+my_cols_two = c("darkgoldenrod4", "darkorange3", "chocolate4")
 my_text = c("all gaps", "quadprog", "greedy", "unsolved")
 my_text_two =  c("All correct gaps", "All wrong gaps")
 my_text_quad = c("quadprog correct gaps", "quadprog incorrect gaps") 
@@ -215,34 +213,45 @@ medium_gaps = subset(sub_valid,
 large_gaps = subset(sub_valid, 
     sub_valid[,10] >= size_cats[3])
 
+overlaps_invalid = subset(sub_invalid, sub_invalid[,10] < size_cats[1])
+small_gaps_invalid = subset(sub_invalid, 
+    sub_invalid[,10] >= size_cats[1] & sub_invalid[,10] < size_cats[2])
+medium_gaps_invalid = subset(sub_invalid, 
+    sub_invalid[,10] >= size_cats[2] & sub_invalid[,10] < size_cats[3])
+large_gaps_invalid = subset(sub_invalid, 
+    sub_invalid[,10] >= size_cats[3])
+
 # barplot of correctness for each method
 methods = c("quadprog", "greedy")
-leg = c("correct", "incorrect")
+leg = c("correct", "incorrect", "unsolved")
 
 for (m in methods) {
     m_overlaps_correct = subset(overlaps, 
         overlaps[,8] == m & overlaps[,9] == 1)
-
     m_small_gaps_correct = subset(small_gaps, 
         small_gaps[,8] == m & small_gaps[,9] == 1)
-
     m_medium_gaps_correct = subset(medium_gaps, 
         medium_gaps[,8] == m & medium_gaps[,9] == 1)
-
     m_large_gaps_correct = subset(large_gaps, 
         large_gaps[,8] == m & large_gaps[,9] == 1)
 
     m_overlaps_incorrect = subset(overlaps, 
         overlaps[,8] == m & overlaps[,9] == 0)
-
     m_small_gaps_incorrect = subset(small_gaps, 
         small_gaps[,8] == m & small_gaps[,9] == 0)
-
     m_medium_gaps_incorrect = subset(medium_gaps, 
         medium_gaps[,8] == m & medium_gaps[,9] == 0)
-
     m_large_gaps_incorrect = subset(large_gaps, 
         large_gaps[,8] == m & large_gaps[,9] == 0)
+
+    m_overlaps_invalid = subset(overlaps_invalid, 
+        overlaps_invalid[,8] == m & overlaps_invalid[,9] == 0)
+    m_small_gaps_invalid = subset(small_gaps_invalid, 
+        small_gaps_invalid[,8] == m & small_gaps_invalid[,9] == 0)
+    m_medium_gaps_invalid = subset(medium_gaps_invalid, 
+        medium_gaps_invalid[,8] == m & medium_gaps_invalid[,9] == 0)
+    m_large_gaps_invalid = subset(large_gaps_invalid, 
+        large_gaps_invalid[,8] == m & large_gaps_invalid[,9] == 0)
 
     name = paste(out_prefix, "/", sep="")
     # name = out_prefix
@@ -255,7 +264,12 @@ for (m in methods) {
     values_incorrect = c(nrow(m_overlaps_incorrect), nrow(m_small_gaps_incorrect), 
         nrow(m_medium_gaps_incorrect), nrow(m_large_gaps_incorrect))
 
-    x = rbind(values_correct, values_incorrect)
+    values_invalid = c(nrow(m_overlaps_invalid), nrow(m_small_gaps_invalid), 
+        nrow(m_medium_gaps_invalid), nrow(m_large_gaps_invalid))
+
+
+    # what does this even do?
+    x = rbind(values_correct, values_incorrect, values_invalid)
 
     overlap_name = paste("<", size_cats[1], sep="")
     small_name = paste(size_cats[1], "-", sep="")
@@ -270,7 +284,8 @@ for (m in methods) {
         ylab="Number of results", 
         main = paste(data_name, paste("barplot of correctness for", m)))
     
-    legend("topright", legend=leg, col=my_cols_two, lty=c(1,1), lwd=c(3,3))
+
+    legend("top", "groups", legend=leg, col=my_cols_two, lty=c(1,1), lwd=c(3,3))
 
     dev.off()
 }

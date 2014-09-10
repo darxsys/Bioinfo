@@ -13,7 +13,7 @@ if [ $# -ne 6 ]
     then
         echo "Wrong number of arguments."
         echo -n "script <rscript> <r-stats-file> <latex-script>"
-        echo -n " <r-output-folder> <latex-output-folder> <data-name>"
+        echo -n " <r-output-folder> <data-name>"
         echo " <out-pdf-name>"
         exit -1
 fi
